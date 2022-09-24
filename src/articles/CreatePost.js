@@ -22,7 +22,7 @@ export default function CreatePost() {
         postContent: content,
         image: '',
         createdAt: Timestamp.now().toDate(),
-        likes: 0,
+        likes: [],
         comments: [],
         postedBy: 'dixitpriyanshu23@gmail.com',
     })
@@ -75,7 +75,7 @@ export default function CreatePost() {
                         postContent: formData.postContent,
                         imageUrl: url,
                         createdAt: Timestamp.now().toDate(),
-                        likes: 0,
+                        likes: [],
                         comments: [],
                         postedBy: formData.postedBy,
                     })
@@ -265,7 +265,7 @@ class Editor extends Component {
 
     render() {
         return (
-            <>
+            <div className="App">
                 <div className="editor">
                     <CKEditor
                         editor={ClassicEditor}
@@ -285,7 +285,7 @@ class Editor extends Component {
                     <h2>Content here</h2>
                     <p>{parse(content)}</p>
                 </div>
-            </>
+            </div>
         )
     }
 }

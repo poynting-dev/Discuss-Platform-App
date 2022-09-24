@@ -5,6 +5,7 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^35.1.0",
     "@ckeditor/ckeditor5-react": "^5.0.2",
+    "@ckeditor/ckeditor5-upload": "^35.1.0",
     "@headlessui/react": "^1.7.2",
     "@material-tailwind/react": "^1.2.4",
     "@testing-library/jest-dom": "^5.16.5",

@@ -26,6 +26,7 @@ import PrivateRoute from './PrivateRoute'
 import ForgotPassword from './ForgotPassword'
 import UpdateProfile from './UpdateProfile'
 import CreatePost from './articles/CreatePost'
+import ArticlePage from './articles/ArticlePage'
 
 function App() {
     return (
@@ -59,6 +60,11 @@ function App() {
                                     path="/createPost"
                                     element={<CreatePost />}
                                 />
+                                <Route
+                                    path="/articlepage/:id"
+                                    element={<ArticlePage />}
+                                />
+
                                 <Route path="/signup" element={<Signup />} />
                                 <Route path="/login" element={<Login />} />
                                 <Route
@@ -100,7 +106,7 @@ const NavBar = () => {
                                     </a>
 
                                     <a
-                                        href="createPost"
+                                        href="/createPost"
                                         className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                     >
                                         New Post
