@@ -1,0 +1,41 @@
+.drop_zone {
+    display: flex;
+    height: 200px;
+    width: 100%;
+    background: white;
+    background-image: url("https://www.nicepng.com/png/detail/108-1084516_upload-to-cloud-blue-button-upload-cloud-icon.png");
+    background-repeat: no-repeat;
+    background-size: 100px;
+    background-position: center;
+    background-color: rgb(38, 96, 204);
+    cursor: pointer;
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    background-position: center 28px;
+}
+
+.drop_zone>p {
+    margin: auto;
+}
+
+.image {
+    width: 200px;
+    height: 200px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* .App {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 5em;
+  } */
+
+.editor {
+    margin-right: 10em;
+}
+
+.ck-editor__editable_inline {
+    min-height: 500px;
+}
