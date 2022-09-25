@@ -7,11 +7,27 @@ import { toast } from 'react-toastify'
 import { CKEditor } from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import parse from 'html-react-parser'
+// import Editor from './Editor'
+import 'froala-editor/css/froala_style.min.css'
+import 'froala-editor/css/froala_editor.pkgd.min.css'
+import FroalaEditor from 'react-froala-wysiwyg'
+import FroalaEditorView from 'react-froala-wysiwyg/FroalaEditorView'
+import { Form } from 'react-bootstrap'
+import { Typeahead } from 'react-bootstrap-typeahead'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 var content =
     "<p>I had OA today, I got 3 questions to solve. I solved other two but couldn't solve this.<br>Pls share the solution.</p><p>&nbsp;</p><h2>Problem Statement</h2><p>&nbsp;</p><p>There is a door at Amazon Office which can be used only by one person at a time i. e either a person can enter from the door or exit but no two people can do it simultaneously. If two person going in the opposite direction arrived at the door at the same time then these 3 cases should be considered:-</p><p>&nbsp;</p><p>If the door was not used before or it was not used in the previous second then the person who wants to exit goes first.<br>If the door has been used in the previous second for entering, then the person who wants to enter goes first.<br>If the door has been used in the previous second for exiting, then the person who wants to exist goes first.<br>If two people arrive at the same time and going in the same direction then the person whose name in the given list comes first will go first.</p><p>&nbsp;</p><p>Note:- To cross the door, it will take exactly one second for each person.<br>Input<br>The first line of input contains a single integer N containing the number of people The second line of input contains N space- separated integers depicting the arrival time of the ith person. The last line of input containing N space- separated integers which are either 0 or 1. 0 indicates that the person wants to enter and 1 indicates he wants to exit.</p><p>&nbsp;</p><h2>Constraints:-</h2><p>&nbsp;</p><p>1 &lt;= N &lt;= 50000<br>0 &lt;= Arrival[i] &lt;= Arrival [i+1] &lt;= 1000000000</p>"
 
 export default function CreatePost() {
+    const [error, setError] = useState('')
+    const { currentUser, logout } = useAuth()
+    const navigate = useNavigate()
+    const displayName = currentUser.displayName
+
     const [image, setImage] = useState(null)
     const [previewUrl, setPreviewUrl] = useState('')
     const fileInput = useRef(null)
@@ -19,12 +35,17 @@ export default function CreatePost() {
     //---------------------FILE UPLOAD OPERTIONS BELOW-------------------------
     const [formData, setFormData] = useState({
         title: '',
-        postContent: content,
+        postContent: '',
         image: '',
         createdAt: Timestamp.now().toDate(),
-        likes: [],
-        comments: [],
-        postedBy: 'dixitpriyanshu23@gmail.com',
+        likes: ['test@test.com'],
+        comments: {
+            commentedBy: 'test@test.com',
+            comment: 'Best Post',
+            commentedOn: 'September 25, 2022 at 10:41:23 PM UTC+5:30',
+        },
+        postedBy: currentUser.email,
+        tags: [],
     })
 
     const [progress, setProgress] = useState(0)
@@ -43,7 +64,7 @@ export default function CreatePost() {
             alert('Please fill all the fields')
             return
         }
-
+        console.log(formData)
         const storageRef = ref(
             storage,
             `/images/${Date.now()}${formData.image.name}`
@@ -64,8 +85,13 @@ export default function CreatePost() {
             () => {
                 setFormData({
                     title: '',
-                    description: '',
+                    postContent: '',
                     image: '',
+                    createdAt: Timestamp.now().toDate(),
+                    likes: [''],
+                    comments: { '': '' },
+                    postedBy: currentUser.email,
+                    tags: [],
                 })
 
                 getDownloadURL(uploadImage.snapshot.ref).then((url) => {
@@ -78,6 +104,7 @@ export default function CreatePost() {
                         likes: [],
                         comments: [],
                         postedBy: formData.postedBy,
+                        tags: formData.tags,
                     })
                         .then(() => {
                             toast('Article added successfully', {
@@ -144,7 +171,7 @@ export default function CreatePost() {
                     <div className="mt-4 md:mt-0 md:col-span-2">
                         <div className="shadow sm:rounded-md sm:overflow-hidden">
                             <div className="px-4 bg-white sm:p-6 bg-gradient-to-r from-cyan-500 to-blue-500">
-                                <div>
+                                <div className="mb-2">
                                     <label
                                         htmlFor="title"
                                         className="block text-3xl font-medium text-gray-700 mb-1"
@@ -163,6 +190,10 @@ export default function CreatePost() {
                                         />
                                     </div>
                                 </div>
+                                <TypeHead
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                />
                                 {progress === 0 ? null : (
                                     <div className="progess">
                                         <div
@@ -206,6 +237,7 @@ export default function CreatePost() {
                                                         e.target.files[0]
                                                     )
                                                     setImage(e.target.files[0])
+                                                    console.log(image)
                                                 }}
                                                 // onChange={(e) => handleImageChange(e)}
                                             />
@@ -224,19 +256,15 @@ export default function CreatePost() {
                                         Content
                                     </label>
                                     <div className="mt-1">
-                                        <Editor
-                                        // formData={formData}
-                                        // setFormData={setFormData}
-                                        />
-                                        {/* <textarea
+                                        <textarea
                                             type="text"
-                                            name="description"
+                                            name="postContent"
                                             id="content"
                                             onChange={(e) => handleChange(e)}
                                             rows={4}
                                             placeholder="Write content here!"
                                             className="bg-neutral-700	text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 p-3 block w-full sm:text-lg border-gray-300 rounded-md"
-                                        /> */}
+                                        />
                                     </div>
                                 </div>
                                 <div className="pb-4 w-full sm:px-6 text-white">
@@ -257,35 +285,32 @@ export default function CreatePost() {
     )
 }
 
-class Editor extends Component {
-    constructor(props) {
-        super(props)
-        this.state = { content: '' }
+const TypeHead = ({ formData, setFormData }) => {
+    const [singleSelections, setSingleSelections] = useState([])
+    const [multiSelections, setMultiSelections] = useState([])
+    const handleTags = (e) => {
+        const arr = []
+        e.map((tag) => {
+            arr.push(tag.label)
+        })
+        setFormData({ ...formData, tags: arr })
     }
-
-    render() {
-        return (
-            <div className="App">
-                <div className="editor">
-                    <CKEditor
-                        editor={ClassicEditor}
-                        data={content}
-                        onChange={(event, editor) => {
-                            const data = editor.getData()
-                            this.setState({ data })
-                            {
-                                content = data
-                                console.log(data)
-                            }
-                            // setEditorText(data)
-                        }}
-                    />
-                </div>
-                <div>
-                    <h2>Content here</h2>
-                    <p>{parse(content)}</p>
-                </div>
+    return (
+        <>
+            <div style={{ marginTop: '20px' }}>
+                <div>Multiple Selections</div>
+                <Typeahead
+                    allowNew
+                    id="custom-selections-example"
+                    multiple
+                    newSelectionPrefix="Add a new category: "
+                    options={[]}
+                    placeholder="Type anything..."
+                    onChange={(e) => {
+                        handleTags(e)
+                    }}
+                />
             </div>
-        )
-    }
+        </>
+    )
 }

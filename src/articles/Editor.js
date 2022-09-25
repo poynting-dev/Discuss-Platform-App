@@ -1,39 +1,31 @@
 import React, { Component } from 'react'
-import { CKEditor } from '@ckeditor/ckeditor5-react'
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
-import parse from 'html-react-parser'
-import './handler.css'
+import 'froala-editor/css/froala_style.min.css'
+import 'froala-editor/css/froala_editor.pkgd.min.css'
+import FroalaEditor from 'react-froala-wysiwyg'
 
-var text = ''
-class Editor extends Component {
-    constructor(props) {
-        super(props)
-        this.state = { text: '' }
+class Editor extends React.Component {
+    constructor() {
+        super()
+
+        this.handleModelChange = this.handleModelChange.bind(this)
+
+        this.state = {
+            model: 'Example text',
+        }
     }
 
+    handleModelChange(model) {
+        this.setState({
+            model: model,
+        })
+        console.log(this.state.model)
+    }
     render() {
         return (
-            <>
-                <div className="editor">
-                    <CKEditor
-                        editor={ClassicEditor}
-                        data={text}
-                        onChange={(event, editor) => {
-                            const data = editor.getData()
-                            this.setState({ data })
-                            {
-                                text = data
-                                console.log(data)
-                            }
-                            // setEditorText(data)
-                        }}
-                    />
-                </div>
-                <div>
-                    <h2>Content here</h2>
-                    <p>{parse(text)}</p>
-                </div>
-            </>
+            <FroalaEditor
+                model={this.state.model}
+                onModelChange={this.handleModelChange}
+            />
         )
     }
 }

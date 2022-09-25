@@ -3,10 +3,10 @@ import { Form, Button, Card, Alert } from 'react-bootstrap'
 import { useAuth } from './contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 
-export default function Login() {
+export default function Logout() {
     const emailRef = useState()
     const passwordRef = useState()
-    const { login, logout } = useAuth()
+    const { logout } = useAuth()
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
@@ -14,15 +14,15 @@ export default function Login() {
     async function handleSubmit(e) {
         e.preventDefault()
 
-        try {
-            setError('')
-            setLoading(true)
-            await login(emailRef.current.value, passwordRef.current.value)
-            navigate('/')
-        } catch {
-            setError('Failed to log in')
-        }
-        setLoading(false)
+        // try {
+        //     setError('')
+        //     setLoading(true)
+        //     await login(emailRef.current.value, passwordRef.current.value)
+        //     navigate('/')
+        // } catch {
+        //     setError('Failed to log in')
+        // }
+        // setLoading(false)
     }
 
     return (

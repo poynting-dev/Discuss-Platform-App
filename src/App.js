@@ -1,11 +1,15 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect, useContext } from 'react'
 import { Form, Button as bootstrapBTN, Card, Container } from 'react-bootstrap'
 import { Transition } from '@headlessui/react'
 import Signup from './Signup'
 import Dashboard from './Dashboard'
 import Login from './Login'
-import { AuthProvider } from './contexts/AuthContext'
 import 'bootstrap/dist/css/bootstrap.min.css'
+
+import { useAuth, AuthProvider } from './contexts/AuthContext'
+import { getAuth, updateProfile } from 'firebase/auth'
+import { Link, useNavigate } from 'react-router-dom'
+
 import {
     BrowserRouter as Router,
     Routes,
@@ -27,56 +31,68 @@ import ForgotPassword from './ForgotPassword'
 import UpdateProfile from './UpdateProfile'
 import CreatePost from './articles/CreatePost'
 import ArticlePage from './articles/ArticlePage'
+import Logout from './Logout'
 
 function App() {
+    // const { logout } = useContext(AuthProvider)
+    // const [error, setError] = useState('')
+    // const navigate = useNavigate()
+    // const displayName = currentUser.displayName
+
+    // async function handleLogout() {
+    //     setError('')
+    //     try {
+    //         await logout()
+    //         navigate('/login')
+    //     } catch {
+    //         setError('Failed to log out')
+    //     }
+    // }
+
     return (
         <>
-            <NavBar />
-            <div
-                className="d-flex align-items-center justify-content-center"
+            {/* <button className="h2" onClick={handleLogout}> */}
+            {/* Logout */}
+            {/* </button> */}
+            {/* <div */}
+            {/* className="d-flex align-items-center justify-content-center"
                 // style={{ minHeight: '100vh' }}
-            >
-                {/* <div className="w-100" style={{ maxWidth: '400px' }}> */}
-                <Router>
-                    <Fragment>
-                        <AuthProvider>
-                            <Routes>
+            > */}
+            {/* <div className="w-100" style={{ maxWidth: '400px' }}> */}
+            <Router>
+                <Fragment>
+                    <AuthProvider>
+                        {/* <Logout /> */}
+                        <NavBar />
+                        <Routes>
+                            <Route exact path="/" element={<PrivateRoute />}>
+                                <Route exact path="/" element={<Dashboard />} />
                                 <Route
-                                    exact
-                                    path="/"
-                                    element={<PrivateRoute />}
-                                >
-                                    <Route
-                                        exact
-                                        path="/"
-                                        element={<Dashboard />}
-                                    />
-                                    <Route
-                                        path="/update-profile"
-                                        element={<UpdateProfile />}
-                                    />
-                                </Route>
-                                <Route
-                                    path="/createPost"
-                                    element={<CreatePost />}
+                                    path="/update-profile"
+                                    element={<UpdateProfile />}
                                 />
-                                <Route
-                                    path="/articlepage/:id"
-                                    element={<ArticlePage />}
-                                />
+                            </Route>
+                            <Route
+                                path="/createPost"
+                                element={<CreatePost />}
+                            />
+                            <Route
+                                path="/articlepage/:id"
+                                element={<ArticlePage />}
+                            />
 
-                                <Route path="/signup" element={<Signup />} />
-                                <Route path="/login" element={<Login />} />
-                                <Route
-                                    path="/forgot-password"
-                                    element={<ForgotPassword />}
-                                />
-                            </Routes>
-                        </AuthProvider>
-                    </Fragment>
-                </Router>
-                {/* </div> */}
-            </div>
+                            <Route path="/signup" element={<Signup />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route
+                                path="/forgot-password"
+                                element={<ForgotPassword />}
+                            />
+                        </Routes>
+                    </AuthProvider>
+                </Fragment>
+            </Router>
+            {/* </div> */}
+            {/* </div> */}
         </>
     )
 }
@@ -92,7 +108,7 @@ const NavBar = () => {
                             <div className="flex-shrink-0">
                                 <img
                                     className="h-8 w-8"
-                                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
+                                    src="https://img.icons8.com/external-filled-agus-raharjo/344/external-communication-communication-filled-agus-raharjo-2.png"
                                     alt="Workflow"
                                 />
                             </div>
@@ -110,27 +126,6 @@ const NavBar = () => {
                                         className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                     >
                                         New Post
-                                    </a>
-
-                                    <a
-                                        href="#"
-                                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                    >
-                                        Projects
-                                    </a>
-
-                                    <a
-                                        href="#"
-                                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                    >
-                                        Calendar
-                                    </a>
-
-                                    <a
-                                        href="#"
-                                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                    >
-                                        Reports
                                     </a>
                                 </div>
                             </div>
@@ -198,38 +193,17 @@ const NavBar = () => {
                                 className="px-2 pt-2 pb-3 space-y-1 sm:px-3"
                             >
                                 <a
-                                    href="#"
+                                    href="/"
                                     className="hover:bg-gray-700 text-white block px-3 py-2 rounded-md text-base font-medium"
                                 >
                                     Dashboard
                                 </a>
 
                                 <a
-                                    href="#"
-                                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                                    href="/createPost"
+                                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                                 >
-                                    Team
-                                </a>
-
-                                <a
-                                    href="#"
-                                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                                >
-                                    Projects
-                                </a>
-
-                                <a
-                                    href="#"
-                                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                                >
-                                    Calendar
-                                </a>
-
-                                <a
-                                    href="#"
-                                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                                >
-                                    Reports
+                                    New Post
                                 </a>
                             </div>
                         </div>
